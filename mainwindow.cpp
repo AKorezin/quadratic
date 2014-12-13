@@ -16,16 +16,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-	QStringList k=ui->lineEdit->text().split(QRegExp("\\s"));
+	QStringList k=ui->lineEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts);
+	if(ui->lineEdit->text().contains(QRegExp("[^1-9\\si+-]")) or chck(k))
+	{
+		ui->statusBar->showMessage("Ошибка записи");
+		return;
+	}
 	if (k.size()!=3)
 	{
 		ui->statusBar->showMessage("Уравнение не квадратное");
 		return;
 	}
-	else
-	{
-		ui->statusBar->clearMessage();
-	}
+	ui->statusBar->clearMessage();
 	QList<qreal> k_sep;
 	k_sep=parseList(k);
 	solve(k_sep);
@@ -36,6 +38,36 @@ void MainWindow::on_pushButton_clicked()
 QList<qreal> MainWindow::parseList(QStringList klist)
 {
 	QList<qreal> k_sep;
+	for(int i=0;i<klist.size()*2;i++)
+		k_sep<<0;
+	for(int i=0;i<klist.size();i++)
+	{
+		QString k=klist[i];
+		QStringList klist_part,klist_sign;
+		klist_part=k.split(QRegExp("[+-]"),QString::SkipEmptyParts);
+		klist_sign=k.split(QRegExp("[^+-]"),QString::SkipEmptyParts);
+		for(int j=0;j<klist_part.size();j++)
+		{
+			QString part;
+			if(klist_part.size()!=klist_sign.size())
+			{
+				klist_sign.insert(0,"+");
+			}
+			part=klist_sign[j]+klist_part[j];
+			if(klist_part[j].contains("i"))
+			{
+				part.remove("i");
+				qDebug()<<part;
+				if(part.length()==1)
+					k_sep[2*i+1]+=1;
+				else
+					k_sep[2*i+1]+=part.toDouble();
+			}
+			else
+				k_sep[2*i]+=part.toDouble();
+		}
+	}
+	qDebug()<<k_sep;
 	return k_sep;
 }
 
@@ -43,4 +75,15 @@ void MainWindow::solve(QList<qreal> k_sep)
 {
 	x1=0;
 	x2=0;
+}
+
+bool MainWindow::chck(QStringList list)
+{
+	QRegExp rex(".*[+-]{2,}.*|.*[+-]$");
+	for(int i=0;i<list.size();i++)
+	{
+		if(rex.exactMatch(list[i]))
+			return true;
+	}
+	return false;
 }

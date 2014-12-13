@@ -23,6 +23,7 @@ private:
 	qreal x1,x2;
 	QList<qreal> parseList(QStringList);
 	void solve(QList<qreal>);
+	bool chck(QStringList);
 };
 
 #endif // MAINWINDOW_H
