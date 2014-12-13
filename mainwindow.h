@@ -20,7 +20,7 @@ private slots:
 
 private:
 	Ui::MainWindow *ui;
-	qreal x1,x2;
+	qreal x1[2],x2[2];
 	QList<qreal> parseList(QStringList);
 	void solve(QList<qreal>);
 	bool chck(QStringList);

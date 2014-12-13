@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include <QtMath>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -31,8 +32,8 @@ void MainWindow::on_pushButton_clicked()
 	QList<qreal> k_sep;
 	k_sep=parseList(k);
 	solve(k_sep);
-	ui->label->setText("Первый корень: "+QString::number(x1));
-	ui->label_2->setText("Второй корень: "+QString::number(x2));
+	ui->label->setText("Первый корень: "+QString::number(x1[0])+"+"+QString::number(x1[1])+"i");
+	ui->label_2->setText("Второй корень: "+QString::number(x2[0])+"+"+QString::number(x2[1])+"i");
 }
 
 QList<qreal> MainWindow::parseList(QStringList klist)
@@ -57,7 +58,6 @@ QList<qreal> MainWindow::parseList(QStringList klist)
 			if(klist_part[j].contains("i"))
 			{
 				part.remove("i");
-				qDebug()<<part;
 				if(part.length()==1)
 					k_sep[2*i+1]+=1;
 				else
@@ -71,10 +71,33 @@ QList<qreal> MainWindow::parseList(QStringList klist)
 	return k_sep;
 }
 
-void MainWindow::solve(QList<qreal> k_sep)
+void MainWindow::solve(QList<qreal> k)
 {
-	x1=0;
-	x2=0;
+	qreal a,b;
+	a=k[2]*k[2]-k[3]*k[3]-4*k[0]*k[4]+4*k[1]*k[5];
+	b=2*k[2]*k[3]-4*k[0]*k[5]-4*k[1]*k[4];
+	qDebug()<<a<<b;
+	qreal c1,c2,l,atan;
+	l=qPow(a*a+b*b,0.25);
+	atan=qAtan(b/a);
+	if (a<0)
+		atan+=M_PI;
+	c1=qCos(atan/2)*l;
+	c2=qSin(atan/2)*l;
+	qDebug()<<c1<<c2;
+	qreal u1,u2,d1,d2;
+	d1=k[0]*2;
+	d2=k[1]*2;
+
+	u1=-k[2]+c1;
+	u2=-k[3]+c2;
+	x1[0]=(u1*d1+u2*d2)/(d1*d1+d2*d2);
+	x1[1]=(d1*u2-d2*u1)/(d1*d1+d2*d2);
+
+	u1=-k[2]-c1;
+	u2=-k[3]-c2;
+	x2[0]=(u1*d1+u2*d2)/(d1*d1+d2*d2);
+	x2[1]=(d1*u2-d2*u1)/(d1*d1+d2*d2);
 }
 
 bool MainWindow::chck(QStringList list)
