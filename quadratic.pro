@@ -14,9 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    quadraticoperation.cpp
+    quadraticoperation.cpp \
+    dialog.cpp
 
 HEADERS  += mainwindow.h \
-    quadraticoperation.h
+    quadraticoperation.h \
+    dialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    dialog.ui

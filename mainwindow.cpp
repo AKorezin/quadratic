@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <QtMath>
+#include <QFileDialog>
 #include "quadraticoperation.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -67,4 +68,31 @@ bool MainWindow::checkValidity(QStringList list)
 			return true;
 	}
 	return false;
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+	QString str = QFileDialog::getOpenFileName(0, "Open Dialog", "", "");
+	if(str.isEmpty())
+	{
+		ui->statusBar->showMessage("No filename specified");
+		return;
+	}
+	QFile file(str);
+	if(!file.exists())
+	{
+		ui->statusBar->showMessage("File not found");
+		return;
+	}
+	if(!file.open(QIODevice::ReadOnly))
+	{
+		ui->statusBar->showMessage("Could not read file");
+		return;
+	}
+	QTextStream in(&file);
+	while(!in.atEnd())
+	{
+		QString fileLine=file.readLine();
+		QStringList lineParts=fileLine.split("\t");
+	}
 }
