@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Quadratic</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QLineEdit" name="lineEdit">
@@ -50,14 +50,14 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Перввый корень:</string>
+        <string>First root:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Второй корень:</string>
+        <string>Second root:</string>
        </property>
       </widget>
      </item>

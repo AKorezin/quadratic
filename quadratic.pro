@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    quadraticoperation.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    quadraticoperation.h
 
 FORMS    += mainwindow.ui

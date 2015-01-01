@@ -21,8 +21,6 @@ private slots:
 private:
 	Ui::MainWindow *ui;
 	qreal firstRoot[2],secondRoot[2];
-	QList<qreal> parseList(QStringList);
-	void solve(QList<qreal>);
 	bool checkValidity(QStringList);
 };
 
