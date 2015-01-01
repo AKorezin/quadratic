@@ -17,115 +17,129 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-	QStringList k=ui->lineEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts);
-	if(ui->lineEdit->text().contains(QRegExp("[^0-9\\si+-]")) or chck(k))
+	QStringList coefficients=ui->lineEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts);
+	if(ui->lineEdit->text().contains(QRegExp("[^0-9\\si+-]")) or checkValidity(coefficients))
 	{
-		ui->statusBar->showMessage("Ошибка записи");
+		ui->statusBar->showMessage("Syntax error");
 		return;
 	}
-	if (k.size()!=3)
+	if (coefficients.size()!=3)
 	{
-		ui->statusBar->showMessage("Уравнение не квадратное");
+		ui->statusBar->showMessage("Not quadratic");
 		return;
 	}
 	ui->statusBar->clearMessage();
-	QList<qreal> k_sep;
-	k_sep=parseList(k);
-	solve(k_sep);
-	QString first,second;
-	if(x1[1]==0 and x2[1]==0)
+	QList<qreal> coeffSeparated;
+	coeffSeparated=parseList(coefficients);
+	solve(coeffSeparated);
+	QString firstRootString,secondRootString;
+	if(firstRoot[1]==0 and secondRoot[1]==0)
 	{
-		first=QString("Первый корень: %1").arg(x1[0],0,'g',5);
-		second=QString("Второй корень: %1").arg(x2[0],0,'g',5);
+		firstRootString=QString("First root: %1")
+				.arg(firstRoot[0],0,'g',5);
+		secondRootString=QString("Second root: %1")
+				.arg(secondRoot[0],0,'g',5);
 	}
 	else
 	{
-		first=QString("Первый корень: %1+%2i").arg(x1[0],0,'g',5).arg(x1[1],0,'g',5);
-		second=QString("Второй корень: %1+%2i").arg(x2[0],0,'g',5).arg(x2[1],0,'g',5);
+		firstRootString=QString("First root: %1+%2i")
+				.arg(firstRoot[0],0,'g',5).arg(firstRoot[1],0,'g',5);
+		secondRootString=QString("Second root: %1+%2i")
+				.arg(secondRoot[0],0,'g',5).arg(secondRoot[1],0,'g',5);
 	}
-	ui->label->setText(first);
-	ui->label_2->setText(second);
+	ui->label->setText(firstRootString);
+	ui->label_2->setText(secondRootString);
 }
 
-QList<qreal> MainWindow::parseList(QStringList klist)
+QList<qreal> MainWindow::parseList(QStringList coeffList)
 {
-	QList<qreal> k_sep;
-	for(int i=0;i<klist.size()*2;i++)
-		k_sep<<0;
-	for(int i=0;i<klist.size();i++)
+	QList<qreal> coeffSeparated;
+	for(int i=0;i<coeffList.size()*2;i++)
+		coeffSeparated<<0;
+	for(int i=0;i<coeffList.size();i++)
 	{
-		QString k=klist[i];
-		QStringList klist_part,klist_sign;
-		klist_part=k.split(QRegExp("[+-]"),QString::SkipEmptyParts);
-		klist_sign=k.split(QRegExp("[^+-]"),QString::SkipEmptyParts);
-		for(int j=0;j<klist_part.size();j++)
+		QString coeff=coeffList[i];
+		QStringList coeffList_part,coeffList_sign;
+		coeffList_part=coeff.split(QRegExp("[+-]"),QString::SkipEmptyParts);
+		coeffList_sign=coeff.split(QRegExp("[^+-]"),QString::SkipEmptyParts);
+		for(int j=0;j<coeffList_part.size();j++)
 		{
 			QString part;
-			if(klist_part.size()!=klist_sign.size())
+			if(coeffList_part.size()!=coeffList_sign.size())
 			{
-				klist_sign.insert(0,"+");
+				coeffList_sign.insert(0,"+");
 			}
-			part=klist_sign[j]+klist_part[j];
-			if(klist_part[j].contains("i"))
+			part=coeffList_sign[j]+coeffList_part[j];
+			if(coeffList_part[j].contains("i"))
 			{
 				part.remove("i");
 				if(part.length()==1)
-					k_sep[2*i+1]+=1;
+					coeffSeparated[2*i+1]+=1;
 				else
-					k_sep[2*i+1]+=part.toDouble();
+					coeffSeparated[2*i+1]+=part.toDouble();
 			}
 			else
-				k_sep[2*i]+=part.toDouble();
+				coeffSeparated[2*i]+=part.toDouble();
 		}
 	}
-	qDebug()<<k_sep;
-	return k_sep;
+	qDebug()<<coeffSeparated;
+	return coeffSeparated;
 }
 
-void MainWindow::solve(QList<qreal> k)
+void MainWindow::solve(QList<qreal> coeffSeparated)
 {
 	qreal a,b;
-	a=k[2]*k[2]-k[3]*k[3]-4*k[0]*k[4]+4*k[1]*k[5];
-	b=2*k[2]*k[3]-4*k[0]*k[5]-4*k[1]*k[4];
-	qreal u1,u2,d1,d2;
+	a=coeffSeparated[2]*coeffSeparated[2]-coeffSeparated[3]*coeffSeparated[3]
+			-4*coeffSeparated[0]*coeffSeparated[4]
+			+4*coeffSeparated[1]*coeffSeparated[5];
+	b=2*coeffSeparated[2]*coeffSeparated[3]
+			-4*coeffSeparated[0]*coeffSeparated[5]
+			-4*coeffSeparated[1]*coeffSeparated[4];
+	qreal numeratorReal,numeratorImage,denumeratorReal,denumeratorImage;
 	if(a==0 and b==0)
 	{
-		d1=k[0]*2;
-		d2=k[1]*2;
+		denumeratorReal=coeffSeparated[0]*2;
+		denumeratorImage=coeffSeparated[1]*2;
 
-		u1=-k[2];
-		u2=-k[3];
-		x1[0]=(u1*d1+u2*d2)/(d1*d1+d2*d2);
-		x1[1]=(d1*u2-d2*u1)/(d1*d1+d2*d2);
-		x2[0]=x1[0];
-		x2[1]=x1[1];
+		numeratorReal=-coeffSeparated[2];
+		numeratorImage=-coeffSeparated[3];
+		firstRoot[0]=(numeratorReal*denumeratorReal+numeratorImage*denumeratorImage)
+				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
+		firstRoot[1]=(denumeratorReal*numeratorImage-denumeratorImage*numeratorReal)
+				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
+		secondRoot[0]=firstRoot[0];
+		secondRoot[1]=firstRoot[1];
 	}
 	else
 	{
-		qreal c1,c2,l,atan;
-		l=qPow(a*a+b*b,0.25);
+		qreal constant1,constant2,length,atan;
+		length=qPow(a*a+b*b,0.25);
 		atan=qAtan(b/a);
 		if (a<0)
 			atan+=M_PI;
-		c1=qCos(atan/2)*l;
-		c2=qSin(atan/2)*l;
+		constant1=qCos(atan/2)*length;
+		constant2=qSin(atan/2)*length;
 
-		d1=k[0]*2;
-		d2=k[1]*2;
+		denumeratorReal=coeffSeparated[0]*2;
+		denumeratorImage=coeffSeparated[1]*2;
 
-		u1=-k[2]+c1;
-		u2=-k[3]+c2;
-		x1[0]=(u1*d1+u2*d2)/(d1*d1+d2*d2);
-		x1[1]=(d1*u2-d2*u1)/(d1*d1+d2*d2);
+		numeratorReal=-coeffSeparated[2]+constant1;
+		numeratorImage=-coeffSeparated[3]+constant2;
+		firstRoot[0]=(numeratorReal*denumeratorReal+numeratorImage*denumeratorImage)
+				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
+		firstRoot[1]=(denumeratorReal*numeratorImage-denumeratorImage*numeratorReal)
+				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
 
-		u1=-k[2]-c1;
-		u2=-k[3]-c2;
-		x2[0]=(u1*d1+u2*d2)/(d1*d1+d2*d2);
-		x2[1]=(d1*u2-d2*u1)/(d1*d1+d2*d2);
+		numeratorReal=-coeffSeparated[2]-constant1;
+		numeratorImage=-coeffSeparated[3]-constant2;
+		secondRoot[0]=(numeratorReal*denumeratorReal+numeratorImage*denumeratorImage)
+				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
+		secondRoot[1]=(denumeratorReal*numeratorImage-denumeratorImage*numeratorReal)
+				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
 	}
 }
 
-bool MainWindow::chck(QStringList list)
+bool MainWindow::checkValidity(QStringList list)
 {
 	QRegExp rex(".*[+-]{2,}.*|.*[+-]$");
 	for(int i=0;i<list.size();i++)
