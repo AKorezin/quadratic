@@ -4,6 +4,7 @@
 #include <QtMath>
 #include <QFileDialog>
 #include "quadraticoperation.h"
+#include "dialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -90,9 +91,24 @@ void MainWindow::on_actionOpen_triggered()
 		return;
 	}
 	QTextStream in(&file);
+	Dialog *displayFile=new Dialog(this);
+	displayFile->show();
 	while(!in.atEnd())
 	{
 		QString fileLine=file.readLine();
 		QStringList lineParts=fileLine.split("\t");
+
+		QStringList coefficients=lineParts[0].split(QRegExp("\\s"),QString::SkipEmptyParts);
+		if(lineParts[0].contains(QRegExp("[^0-9\\si+-]")) or checkValidity(coefficients))
+		{
+			displayFile->addErrorMessage(lineParts[0],"Syntax error");
+			continue;
+		}
+		if (coefficients.size()!=3)
+		{
+			displayFile->addErrorMessage(lineParts[0],"Not quadratic");
+			continue;
+		}
+
 	}
 }
