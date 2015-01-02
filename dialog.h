@@ -14,8 +14,7 @@ class Dialog : public QDialog
 public:
 	explicit Dialog(QWidget *parent = 0);
 	~Dialog();
-	void addErrorMessage(QString,QString);
-	void addRoots(QString,QString);
+	void addLine(QString,QString);
 private:
 	Ui::Dialog *ui;
 };

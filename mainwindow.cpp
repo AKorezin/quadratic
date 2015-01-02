@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
 #include <QtMath>
 #include <QFileDialog>
+#include <QTextStream>
 #include "quadraticoperation.h"
 #include "dialog.h"
 
@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	setFixedSize(size());
 }
 
 MainWindow::~MainWindow()
@@ -50,10 +51,18 @@ void MainWindow::on_pushButton_clicked()
 	}
 	else
 	{
-		firstRootString=QString("First root: %1+%2i")
-				.arg(firstRoot[0],0,'g',5).arg(firstRoot[1],0,'g',5);
-		secondRootString=QString("Second root: %1+%2i")
-				.arg(secondRoot[0],0,'g',5).arg(secondRoot[1],0,'g',5);
+		if(firstRoot[1]>0)
+			firstRootString=QString("First root: %1+%2i")
+					.arg(firstRoot[0],0,'g',5).arg(firstRoot[1],0,'g',5);
+		else
+			firstRootString=QString("First root: %1-%2i")
+					.arg(firstRoot[0],0,'g',5).arg(-firstRoot[1],0,'g',5);
+		if(firstRoot[1]>0)
+			secondRootString=QString("Second root: %1+%2i")
+					.arg(secondRoot[0],0,'g',5).arg(secondRoot[1],0,'g',5);
+		else
+			secondRootString=QString("Second root: %1-%2i")
+					.arg(secondRoot[0],0,'g',5).arg(-secondRoot[1],0,'g',5);
 	}
 	ui->label->setText(firstRootString);
 	ui->label_2->setText(secondRootString);
@@ -97,18 +106,37 @@ void MainWindow::on_actionOpen_triggered()
 	{
 		QString fileLine=file.readLine();
 		QStringList lineParts=fileLine.split("\t");
-
 		QStringList coefficients=lineParts[0].split(QRegExp("\\s"),QString::SkipEmptyParts);
 		if(lineParts[0].contains(QRegExp("[^0-9\\si+-]")) or checkValidity(coefficients))
 		{
-			displayFile->addErrorMessage(lineParts[0],"Syntax error");
+			displayFile->addLine(lineParts[0],"Syntax error");
 			continue;
 		}
 		if (coefficients.size()!=3)
 		{
-			displayFile->addErrorMessage(lineParts[0],"Not quadratic");
+			displayFile->addLine(lineParts[0],"Not quadratic");
 			continue;
 		}
+		QuadraticOperation quadratic(coefficients);
+		qreal* result;
+		result=quadratic.getResult();
+
+		firstRoot[0]=result[0];
+		firstRoot[1]=result[1];
+		secondRoot[0]=result[2];
+		secondRoot[1]=result[3];
+		QString roots;
+		roots+=QString("%1").arg(firstRoot[0],0,'g',5);
+		if(firstRoot[1]>0)
+			roots+=QString("+%1i").arg(firstRoot[1],0,'g',5);
+		if(firstRoot[1]<0)
+			roots+=QString("-%1i").arg(-firstRoot[1],0,'g',5);
+		roots+=QString("; %1").arg(secondRoot[0],0,'g',5);
+		if(secondRoot[1]>0)
+			roots+=QString("+%1i").arg(secondRoot[1],0,'g',5);
+		if(secondRoot[1]<0)
+			roots+=QString("-%1i").arg(-secondRoot[1],0,'g',5);
+		displayFile->addLine(lineParts[0],roots);
 
 	}
 }

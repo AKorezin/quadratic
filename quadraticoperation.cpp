@@ -5,6 +5,7 @@ QuadraticOperation::QuadraticOperation(QStringList coeffList)
 {
 	coeffSeparated=parseList(coeffList);
 	result=solve();
+
 }
 
 QuadraticOperation::~QuadraticOperation()
@@ -14,6 +15,7 @@ QuadraticOperation::~QuadraticOperation()
 
 qreal *QuadraticOperation::getResult()
 {
+
 	return result;
 }
 
@@ -48,7 +50,6 @@ QList<qreal> QuadraticOperation::parseList(QStringList coeffList)
 				coeffSeparated[2*i]+=part.toDouble();
 		}
 	}
-
 	return coeffSeparated;
 }
 qreal* QuadraticOperation::solve()
@@ -103,7 +104,7 @@ qreal* QuadraticOperation::solve()
 		secondRoot[1]=(denumeratorReal*numeratorImage-denumeratorImage*numeratorReal)
 				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
 	}
-	static qreal resultArray[4]={firstRoot[0],firstRoot[1],secondRoot[0],secondRoot[1]};
+	qreal* resultArray=new qreal[4]{firstRoot[0],firstRoot[1],secondRoot[0],secondRoot[1]};
 	return resultArray;
 }
 
