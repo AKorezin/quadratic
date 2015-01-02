@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 	setFixedSize(size());
+	ui->actionSave->setEnabled(false);
+	ui->pushButton_2->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -25,15 +27,21 @@ void MainWindow::on_pushButton_clicked()
 	if(ui->lineEdit->text().contains(QRegExp("[^0-9\\si+-]")) or checkValidity(coefficients))
 	{
 		ui->statusBar->showMessage("Syntax error");
+		ui->actionSave->setEnabled(false);
+		ui->pushButton_2->setEnabled(false);
 		return;
 	}
 	if (coefficients.size()!=3)
 	{
 		ui->statusBar->showMessage("Not quadratic");
+		ui->actionSave->setEnabled(false);
+		ui->pushButton_2->setEnabled(false);
 		return;
 	}
 	ui->statusBar->clearMessage();
-
+	ui->actionSave->setEnabled(true);
+	ui->pushButton_2->setEnabled(true);
+	data=ui->lineEdit->text();
 	QuadraticOperation quadratic(coefficients);
 	qreal* result;
 	result=quadratic.getResult();
@@ -82,13 +90,13 @@ bool MainWindow::checkValidity(QStringList list)
 
 void MainWindow::on_actionOpen_triggered()
 {
-	QString str = QFileDialog::getOpenFileName(0, "Open Dialog", "", "");
-	if(str.isEmpty())
+	QString fileName = QFileDialog::getOpenFileName(0, "Open Dialog", "", "");
+	if(fileName.isEmpty())
 	{
 		ui->statusBar->showMessage("No filename specified");
 		return;
 	}
-	QFile file(str);
+	QFile file(fileName);
 	if(!file.exists())
 	{
 		ui->statusBar->showMessage("File not found");
@@ -99,6 +107,7 @@ void MainWindow::on_actionOpen_triggered()
 		ui->statusBar->showMessage("Could not read file");
 		return;
 	}
+	ui->statusBar->showMessage("File opened");
 	QTextStream in(&file);
 	Dialog *displayFile=new Dialog(this);
 	displayFile->show();
@@ -139,4 +148,58 @@ void MainWindow::on_actionOpen_triggered()
 		displayFile->addLine(lineParts[0],roots);
 
 	}
+	file.close();
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+	QString fileName = QFileDialog::getSaveFileName(0, "Save File", "", "");
+	QFile savefile(fileName);
+	if(!savefile.open(QIODevice::WriteOnly))
+	{
+		ui->statusBar->showMessage("Could not save file");
+		return;
+	}
+	QTextStream out(&savefile);
+	out<<data<<"\t";
+	out<<QString("%1").arg(firstRoot[0],0,'g',5);
+	if(firstRoot[1]>0)
+		out<<QString("+%1i").arg(firstRoot[1],0,'g',5);
+	if(firstRoot[1]<0)
+		out<<QString("-%1i").arg(-firstRoot[1],0,'g',5);
+	out<<QString("; %1").arg(secondRoot[0],0,'g',5);
+	if(firstRoot[1]>0)
+		out<<QString("+%1i").arg(secondRoot[1],0,'g',5);
+	if(firstRoot[1]<0)
+		out<<QString("-%1i").arg(-secondRoot[1],0,'g',5);
+	out<<"\n";
+	ui->statusBar->showMessage("File saved");
+
+	savefile.close();
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+	QString fileName = QFileDialog::getSaveFileName(0, "Save File", "", "", 0,QFileDialog::DontConfirmOverwrite);
+	QFile savefile(fileName);
+	if(!savefile.open(QIODevice::Append))
+	{
+		ui->statusBar->showMessage("Could not append to file");
+		return;
+	}
+	QTextStream out(&savefile);
+	out<<data<<"\t";
+	out<<QString("%1").arg(firstRoot[0],0,'g',5);
+	if(firstRoot[1]>0)
+		out<<QString("+%1i").arg(firstRoot[1],0,'g',5);
+	if(firstRoot[1]<0)
+		out<<QString("-%1i").arg(-firstRoot[1],0,'g',5);
+	out<<QString("; %1").arg(secondRoot[0],0,'g',5);
+	if(firstRoot[1]>0)
+		out<<QString("+%1i").arg(secondRoot[1],0,'g',5);
+	if(firstRoot[1]<0)
+		out<<QString("-%1i").arg(-secondRoot[1],0,'g',5);
+	out<<"\n";
+	ui->statusBar->showMessage("Added to file");
+	savefile.close();
 }

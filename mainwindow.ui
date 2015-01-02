@@ -34,7 +34,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Расчет</string>
+     <string>Solve</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -62,6 +62,19 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>258</x>
+      <y>40</y>
+      <width>131</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add to file</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -118,8 +131,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>199</x>
-     <y>83</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>199</x>

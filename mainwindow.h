@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include <QFile>
 namespace Ui {
 class MainWindow;
 }
@@ -20,10 +20,15 @@ private slots:
 
 	void on_actionOpen_triggered();
 
+	void on_actionSave_triggered();
+
+	void on_pushButton_2_clicked();
+
 private:
 	Ui::MainWindow *ui;
 	qreal firstRoot[2],secondRoot[2];
 	bool checkValidity(QStringList);
+	QString data;
 };
 
 #endif // MAINWINDOW_H
