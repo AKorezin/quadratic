@@ -74,7 +74,7 @@ void MainWindow::on_pushButton_clicked()
 		else
 			firstRootString=QString("First root: %1-%2i")
 					.arg(firstRoot[0],0,'g',5).arg(-firstRoot[1],0,'g',5);
-		if(firstRoot[1]>0)
+		if(secondRoot[1]>0)
 			secondRootString=QString("Second root: %1+%2i")
 					.arg(secondRoot[0],0,'g',5).arg(secondRoot[1],0,'g',5);
 		else
