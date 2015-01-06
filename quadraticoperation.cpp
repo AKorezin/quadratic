@@ -1,5 +1,6 @@
 #include "quadraticoperation.h"
 #include <QtMath>
+#include <QDebug>
 
 QuadraticOperation::QuadraticOperation(QStringList coeffList)
 {
@@ -53,7 +54,10 @@ QList<qreal> QuadraticOperation::parseList(QStringList coeffList)
 			{
 				part.remove("i");
 				if(part.length()==1)
-					coeffSeparated[2*i+1]+=1;
+					if(part=="+")
+						coeffSeparated[2*i+1]+=1;
+					else
+						coeffSeparated[2*i+1]-=1;
 				else
 					coeffSeparated[2*i+1]+=part.toDouble();
 			}
@@ -66,7 +70,6 @@ QList<qreal> QuadraticOperation::parseList(QStringList coeffList)
 qreal* QuadraticOperation::solve()
 {
 	qreal a,b,firstRoot[2],secondRoot[2];
-
 	a=coeffSeparated[2]*coeffSeparated[2]-coeffSeparated[3]*coeffSeparated[3]
 			-4*coeffSeparated[0]*coeffSeparated[4]
 			+4*coeffSeparated[1]*coeffSeparated[5];
@@ -92,30 +95,28 @@ qreal* QuadraticOperation::solve()
 	{
 		qreal constant1,constant2,length,atan;
 		length=qPow(a*a+b*b,0.25);
-		atan=qAtan(b/a);
-		if (a<0)
-			atan+=M_PI;
+		atan=qAtan2(b,a);
 		constant1=qCos(atan/2)*length;
 		constant2=qSin(atan/2)*length;
-
 		denumeratorReal=coeffSeparated[0]*2;
 		denumeratorImage=coeffSeparated[1]*2;
 
 		numeratorReal=-coeffSeparated[2]+constant1;
 		numeratorImage=-coeffSeparated[3]+constant2;
 		firstRoot[0]=(numeratorReal*denumeratorReal+numeratorImage*denumeratorImage)
-				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
+				/(qPow(denumeratorReal,2)+qPow(denumeratorImage,2));
 		firstRoot[1]=(denumeratorReal*numeratorImage-denumeratorImage*numeratorReal)
-				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
+				/(qPow(denumeratorReal,2)+qPow(denumeratorImage,2));
 
 		numeratorReal=-coeffSeparated[2]-constant1;
 		numeratorImage=-coeffSeparated[3]-constant2;
 		secondRoot[0]=(numeratorReal*denumeratorReal+numeratorImage*denumeratorImage)
-				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
+				/(qPow(denumeratorReal,2)+qPow(denumeratorImage,2));
 		secondRoot[1]=(denumeratorReal*numeratorImage-denumeratorImage*numeratorReal)
-				/(denumeratorReal*denumeratorReal+denumeratorImage*denumeratorImage);
+				/(qPow(denumeratorReal,2)+qPow(denumeratorImage,2));
 	}
 	qreal* resultArray=new qreal[4]{firstRoot[0],firstRoot[1],secondRoot[0],secondRoot[1]};
-	return resultArray;
+
+return resultArray;
 }
 
