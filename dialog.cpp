@@ -8,6 +8,8 @@ Dialog::Dialog(QWidget *parent) :
 	ui->setupUi(this);
 	setFixedSize(size());
 	ui->tableWidget->setColumnCount(2);
+	ui->tableWidget->setHorizontalHeaderLabels(
+				QStringList({"Coefficients","Roots"}));
 	ui->tableWidget->setRowCount(0);
 	ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
 	ui->tableWidget->setColumnWidth(0,ui->tableWidget->width()/2-50);

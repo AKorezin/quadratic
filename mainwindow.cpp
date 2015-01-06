@@ -24,7 +24,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
 	QStringList coefficients=ui->lineEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts);
-	if(ui->lineEdit->text().contains(QRegExp("[^0-9\\si+-]")) or checkValidity(coefficients))
+	if(ui->lineEdit->text().contains(QRegExp("[^0-9\\.\\si+-]")) or checkValidity(coefficients))
 	{
 		ui->statusBar->showMessage("Syntax error");
 		ui->actionSave->setEnabled(false);
@@ -88,7 +88,7 @@ void MainWindow::on_pushButton_clicked()
 
 bool MainWindow::checkValidity(QStringList list)
 {
-	QRegExp rex(".*[+-]{2,}.*|.*[+-]$");
+	QRegExp rex(".*[+-]{2,}.*|.*[+-]$|.*\\..*\\..*");
 	for(int i=0;i<list.size();i++)
 	{
 		if(rex.exactMatch(list[i]))
