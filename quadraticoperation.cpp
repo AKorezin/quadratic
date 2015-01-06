@@ -1,6 +1,5 @@
 #include "quadraticoperation.h"
 #include <QtMath>
-#include <QDebug>
 
 QuadraticOperation::QuadraticOperation(QStringList coeffList)
 {

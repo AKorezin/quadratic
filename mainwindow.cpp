@@ -5,7 +5,7 @@
 #include <QTextStream>
 #include "quadraticoperation.h"
 #include "dialog.h"
-
+#include <QDebug>
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -59,28 +59,25 @@ void MainWindow::on_pushButton_clicked()
 	secondRoot[0]=result[2];
 	secondRoot[1]=result[3];
 	QString firstRootString,secondRootString;
-	if(firstRoot[1]==0 and secondRoot[1]==0)
-	{
-		firstRootString=QString("First root: %1")
-				.arg(firstRoot[0],0,'g',5);
-		secondRootString=QString("Second root: %1")
-				.arg(secondRoot[0],0,'g',5);
-	}
-	else
-	{
-		if(firstRoot[1]>0)
-			firstRootString=QString("First root: %1+%2i")
-					.arg(firstRoot[0],0,'g',5).arg(firstRoot[1],0,'g',5);
-		else
-			firstRootString=QString("First root: %1-%2i")
-					.arg(firstRoot[0],0,'g',5).arg(-firstRoot[1],0,'g',5);
-		if(secondRoot[1]>0)
-			secondRootString=QString("Second root: %1+%2i")
-					.arg(secondRoot[0],0,'g',5).arg(secondRoot[1],0,'g',5);
-		else
-			secondRootString=QString("Second root: %1-%2i")
-					.arg(secondRoot[0],0,'g',5).arg(-secondRoot[1],0,'g',5);
-	}
+	firstRootString=QString("First root: ");
+	if(firstRoot[0]!=0)
+		firstRootString+=QString("%1").arg(firstRoot[0],0,'g',5);
+	if(firstRoot[0]!=0 and firstRoot[1]>0)
+		firstRootString+=QString("+");
+	if(firstRoot[1]!=0)
+		firstRootString+=QString("%1i").arg(firstRoot[1],0,'g',5);
+	if(firstRootString.endsWith(": "))
+		firstRootString+=QString("0");
+
+	secondRootString=QString("Second root: ");
+	if(secondRoot[0]!=0)
+		secondRootString+=QString("%1").arg(secondRoot[0],0,'g',5);
+	if(secondRoot[0]!=0 and secondRoot[1]>0)
+		secondRootString+=QString("+");
+	if(secondRoot[1]!=0)
+		secondRootString+=QString("%1i").arg(secondRoot[1],0,'g',5);
+	if(secondRootString.endsWith(": "))
+		secondRootString+=QString("0");
 	ui->label->setText(firstRootString);
 	ui->label_2->setText(secondRootString);
 }
@@ -149,16 +146,25 @@ void MainWindow::on_actionOpen_triggered()
 		secondRoot[0]=result[2];
 		secondRoot[1]=result[3];
 		QString roots;
-		roots+=QString("%1").arg(firstRoot[0],0,'g',5);
-		if(firstRoot[1]>0)
-			roots+=QString("+%1i").arg(firstRoot[1],0,'g',5);
-		if(firstRoot[1]<0)
-			roots+=QString("-%1i").arg(-firstRoot[1],0,'g',5);
-		roots+=QString("; %1").arg(secondRoot[0],0,'g',5);
-		if(secondRoot[1]>0)
-			roots+=QString("+%1i").arg(secondRoot[1],0,'g',5);
-		if(secondRoot[1]<0)
-			roots+=QString("-%1i").arg(-secondRoot[1],0,'g',5);
+
+		if(firstRoot[0]!=0)
+			roots=QString("%1").arg(firstRoot[0],0,'g',5);
+		if(firstRoot[0]!=0 and firstRoot[1]>0)
+			roots+=QString("+");
+		if(firstRoot[1]!=0)
+			roots+=QString("%1i").arg(firstRoot[1],0,'g',5);
+		if(!roots.isEmpty())
+			roots+=QString("; ");
+		else
+			roots+=QString("0; ");
+		if(secondRoot[0]!=0)
+			roots+=QString("%1").arg(secondRoot[0],0,'g',5);
+		if(secondRoot[0]!=0 and secondRoot[1]>0)
+			roots+=QString("+");
+		if(secondRoot[1]!=0)
+			roots+=QString("%1i").arg(secondRoot[1],0,'g',5);
+		if(roots.endsWith("; "))
+			roots+=QString("0");
 		displayFile->addLine(lineParts[0],roots);
 
 	}
@@ -180,18 +186,28 @@ void MainWindow::on_actionSave_triggered()
 		return;
 	}
 	QTextStream out(&savefile);
-	out<<data<<"\t";
-	out<<QString("%1").arg(firstRoot[0],0,'g',5);
-	if(firstRoot[1]>0)
-		out<<QString("+%1i").arg(firstRoot[1],0,'g',5);
-	if(firstRoot[1]<0)
-		out<<QString("-%1i").arg(-firstRoot[1],0,'g',5);
-	out<<QString("; %1").arg(secondRoot[0],0,'g',5);
-	if(firstRoot[1]>0)
-		out<<QString("+%1i").arg(secondRoot[1],0,'g',5);
-	if(firstRoot[1]<0)
-		out<<QString("-%1i").arg(-secondRoot[1],0,'g',5);
-	out<<"\n";
+
+	QString roots;
+
+	if(firstRoot[0]!=0)
+		roots=QString("%1").arg(firstRoot[0],0,'g',5);
+	if(firstRoot[0]!=0 and firstRoot[1]>0)
+		roots+=QString("+");
+	if(firstRoot[1]!=0)
+		roots+=QString("%1i").arg(firstRoot[1],0,'g',5);
+	if(!roots.isEmpty())
+		roots+=QString("; ");
+	else
+		roots+=QString("0; ");
+	if(secondRoot[0]!=0)
+		roots+=QString("%1").arg(secondRoot[0],0,'g',5);
+	if(secondRoot[0]!=0 and secondRoot[1]>0)
+		roots+=QString("+");
+	if(secondRoot[1]!=0)
+		roots+=QString("%1i").arg(secondRoot[1],0,'g',5);
+	if(roots.endsWith("; "))
+		roots+=QString("0");
+	out<<data<<"\t"<<roots<<"\n";
 	ui->statusBar->showMessage("File saved");
 
 	savefile.close();
@@ -212,18 +228,28 @@ void MainWindow::on_pushButton_2_clicked()
 		return;
 	}
 	QTextStream out(&savefile);
-	out<<data<<"\t";
-	out<<QString("%1").arg(firstRoot[0],0,'g',5);
-	if(firstRoot[1]>0)
-		out<<QString("+%1i").arg(firstRoot[1],0,'g',5);
-	if(firstRoot[1]<0)
-		out<<QString("-%1i").arg(-firstRoot[1],0,'g',5);
-	out<<QString("; %1").arg(secondRoot[0],0,'g',5);
-	if(firstRoot[1]>0)
-		out<<QString("+%1i").arg(secondRoot[1],0,'g',5);
-	if(firstRoot[1]<0)
-		out<<QString("-%1i").arg(-secondRoot[1],0,'g',5);
-	out<<"\n";
+	QString roots;
+
+	if(firstRoot[0]!=0)
+		roots=QString("%1").arg(firstRoot[0],0,'g',5);
+	if(firstRoot[0]!=0 and firstRoot[1]>0)
+		roots+=QString("+");
+	if(firstRoot[1]!=0)
+		roots+=QString("%1i").arg(firstRoot[1],0,'g',5);
+	if(!roots.isEmpty())
+		roots+=QString("; ");
+	else
+		roots+=QString("0; ");
+	if(secondRoot[0]!=0)
+		roots+=QString("%1").arg(secondRoot[0],0,'g',5);
+	if(secondRoot[0]!=0 and secondRoot[1]>0)
+		roots+=QString("+");
+	if(secondRoot[1]!=0)
+		roots+=QString("%1i").arg(secondRoot[1],0,'g',5);
+	if(roots.endsWith("; "))
+		roots+=QString("0");
+
+	out<<data<<"\t"<<roots<<"\n";
 	ui->statusBar->showMessage("Added to file");
 	savefile.close();
 }
