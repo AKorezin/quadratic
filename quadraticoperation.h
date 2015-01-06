@@ -8,10 +8,12 @@ public:
 	QuadraticOperation(QStringList coeffList);
 	~QuadraticOperation();
 	qreal* getResult();
+	bool getError();
 private:
 	qreal* result;
 	QList<qreal> coeffSeparated;
 	qreal* solve();
+	bool quadratic;
 	QList<qreal> parseList(QStringList coeffList);
 
 };

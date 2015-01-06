@@ -4,6 +4,12 @@
 QuadraticOperation::QuadraticOperation(QStringList coeffList)
 {
 	coeffSeparated=parseList(coeffList);
+	quadratic=0;
+	if(coeffSeparated[0]==0 and coeffSeparated[1]==0)
+	{
+		quadratic=1;
+		return;
+	}
 	result=solve();
 
 }
@@ -17,6 +23,11 @@ qreal *QuadraticOperation::getResult()
 {
 
 	return result;
+}
+
+bool QuadraticOperation::getError()
+{
+	return quadratic;
 }
 
 QList<qreal> QuadraticOperation::parseList(QStringList coeffList)

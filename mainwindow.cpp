@@ -38,12 +38,21 @@ void MainWindow::on_pushButton_clicked()
 		ui->pushButton_2->setEnabled(false);
 		return;
 	}
-	ui->statusBar->clearMessage();
-	ui->actionSave->setEnabled(true);
-	ui->pushButton_2->setEnabled(true);
 	data=ui->lineEdit->text();
 	QuadraticOperation quadratic(coefficients);
 	qreal* result;
+	if (quadratic.getError())
+	{
+		ui->statusBar->showMessage("Not quadratic");
+		ui->actionSave->setEnabled(false);
+		ui->pushButton_2->setEnabled(false);
+		return;
+	}
+	ui->statusBar->clearMessage();
+	ui->actionSave->setEnabled(true);
+	ui->pushButton_2->setEnabled(true);
+
+
 	result=quadratic.getResult();
 	firstRoot[0]=result[0];
 	firstRoot[1]=result[1];
@@ -127,6 +136,11 @@ void MainWindow::on_actionOpen_triggered()
 			continue;
 		}
 		QuadraticOperation quadratic(coefficients);
+		if (quadratic.getError())
+		{
+			displayFile->addLine(lineParts[0],"Not quadratic");
+			continue;
+		}
 		qreal* result;
 		result=quadratic.getResult();
 
@@ -154,6 +168,11 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionSave_triggered()
 {
 	QString fileName = QFileDialog::getSaveFileName(0, "Save File", "", "");
+	if(fileName.isEmpty())
+	{
+		ui->statusBar->showMessage("No filename specified");
+		return;
+	}
 	QFile savefile(fileName);
 	if(!savefile.open(QIODevice::WriteOnly))
 	{
@@ -181,6 +200,11 @@ void MainWindow::on_actionSave_triggered()
 void MainWindow::on_pushButton_2_clicked()
 {
 	QString fileName = QFileDialog::getSaveFileName(0, "Save File", "", "", 0,QFileDialog::DontConfirmOverwrite);
+	if(fileName.isEmpty())
+	{
+		ui->statusBar->showMessage("No filename specified");
+		return;
+	}
 	QFile savefile(fileName);
 	if(!savefile.open(QIODevice::Append))
 	{
