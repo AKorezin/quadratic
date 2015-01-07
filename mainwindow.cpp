@@ -5,7 +5,7 @@
 #include <QTextStream>
 #include "quadraticoperation.h"
 #include "dialog.h"
-#include <QDebug>
+
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -24,6 +24,8 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
 	QStringList coefficients=ui->lineEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts);
+	ui->label->setText("First root: ");
+	ui->label_2->setText("Second root: ");
 	if(ui->lineEdit->text().contains(QRegExp("[^0-9\\.\\si+-]")) or checkValidity(coefficients))
 	{
 		ui->statusBar->showMessage("Syntax error");
@@ -60,6 +62,7 @@ void MainWindow::on_pushButton_clicked()
 	secondRoot[1]=result[3];
 	QString firstRootString,secondRootString;
 	firstRootString=QString("First root: ");
+	secondRootString=QString("Second root: ");
 	if(firstRoot[0]!=0)
 		firstRootString+=QString("%1").arg(firstRoot[0],0,'g',5);
 	if(firstRoot[0]!=0 and firstRoot[1]>0)
@@ -69,7 +72,7 @@ void MainWindow::on_pushButton_clicked()
 	if(firstRootString.endsWith(": "))
 		firstRootString+=QString("0");
 
-	secondRootString=QString("Second root: ");
+
 	if(secondRoot[0]!=0)
 		secondRootString+=QString("%1").arg(secondRoot[0],0,'g',5);
 	if(secondRoot[0]!=0 and secondRoot[1]>0)
@@ -85,7 +88,7 @@ void MainWindow::on_pushButton_clicked()
 
 bool MainWindow::checkValidity(QStringList list)
 {
-	QRegExp rex(".*[+-]{2,}.*|.*[+-]$|.*\\..*\\..*");
+	QRegExp rex(".*[+-]{2,}.*|.*[+-]$|.*\\..*\\..*|.*i.*i.*");
 	for(int i=0;i<list.size();i++)
 	{
 		if(rex.exactMatch(list[i]))
@@ -122,7 +125,7 @@ void MainWindow::on_actionOpen_triggered()
 		QString fileLine=file.readLine();
 		QStringList lineParts=fileLine.split("\t");
 		QStringList coefficients=lineParts[0].split(QRegExp("\\s"),QString::SkipEmptyParts);
-		if(lineParts[0].contains(QRegExp("[^0-9\\si+-]")) or checkValidity(coefficients))
+		if(lineParts[0].contains(QRegExp("[^0-9\\.\\si+-]")) or checkValidity(coefficients))
 		{
 			displayFile->addLine(lineParts[0],"Syntax error");
 			continue;

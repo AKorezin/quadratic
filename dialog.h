@@ -17,6 +17,8 @@ public:
 	void addLine(QString,QString);
 private:
 	Ui::Dialog *ui;
+
+	void resizeEvent(QResizeEvent *);
 };
 
 #endif // DIALOG_H
