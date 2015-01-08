@@ -98,7 +98,7 @@ bool MainWindow::checkValidity(QStringList list)
 
 void MainWindow::on_actionOpen_triggered()
 {
-	QString fileName = QFileDialog::getOpenFileName(0, "Open Dialog", "", "");
+	QString fileName = QFileDialog::getOpenFileName(0, "Open File", "", "");
 	if(fileName.isEmpty())
 	{
 		ui->statusBar->showMessage("No filename specified");
