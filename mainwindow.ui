@@ -23,6 +23,9 @@
       <height>24</height>
      </rect>
     </property>
+    <property name="text">
+     <string>Input coefficients...</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
