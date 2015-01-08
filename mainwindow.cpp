@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QtMath>
 #include <QFileDialog>
 #include <QTextStream>
 #include "quadraticoperation.h"

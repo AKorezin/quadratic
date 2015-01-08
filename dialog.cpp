@@ -1,6 +1,5 @@
 #include "dialog.h"
 #include "ui_dialog.h"
-#include <QDebug>
 Dialog::Dialog(QWidget *parent) :
 	QDialog(parent),
 	ui(new Ui::Dialog)
@@ -26,7 +25,7 @@ void Dialog::addLine(QString data, QString message)
 	ui->tableWidget->resizeColumnToContents(1);
 }
 
-void Dialog::resizeEvent(QResizeEvent *resize)
+void Dialog::resizeEvent(QResizeEvent *)
 {
 	ui->tableWidget->resize(size().width()-15,size().height()-15);
 }

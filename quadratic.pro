@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = quadratic
 TEMPLATE = app
 CONFIG += c++11
-
+LIBS +=  -Wl,-rpath lib/
 SOURCES += main.cpp\
         mainwindow.cpp \
     quadraticoperation.cpp \
@@ -23,3 +23,5 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui \
     dialog.ui
+
+CONFIG += static
